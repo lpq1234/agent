@@ -19,6 +19,7 @@
 - `agent.py`：极简入口。
 - `agent/loop.py`：组件装配 + REPL 主循环。
 - `agent/runner.py`：单轮 `messages.create`、tool_use 循环、并发安全工具调度。
+- `agent/providers.py`：模型供应商抽象层（支持 Anthropic 与 OpenAI 原生 Chat Completions）。
 
 ### 2.2 三层记忆
 - `agent/memory.py`：记忆存储接口/实现。
@@ -38,6 +39,7 @@
 ### 2.4 工具系统
 - `agent/tools/registry.py` / `base.py` / `schema.py`：工具注册与协议。
 - `agent/tools/`：内置工具（shell、web、filesystem、search、skills）。
+- `agent/tools/mcp.py`：MCP 桥接工具（通过 `MCP_SERVERS_JSON` 接入；同时提供通用 `mcp_call` 与动态代理 `mcp_<server>_<tool>`）。
 - 特殊工具：
   - `todo.py`：任务规划 `update_todos`。
   - `dispatch.py`：子代理派遣 `dispatch_subagent`。

@@ -176,8 +176,14 @@ assistant tool_use:
 
 | 变量 | 说明 |
 |------|------|
+| `LLM_PROVIDER` | 模型供应商：`anthropic`（默认）或 `openai` |
 | `ANTHROPIC_API_KEY` | Anthropic API Key |
 | `ANTHROPIC_BASE_URL` | API 代理地址（可选） |
+| `OPENAI_API_KEY` | OpenAI API Key（`LLM_PROVIDER=openai` 时需要） |
+| `OPENAI_BASE_URL` | OpenAI 兼容代理地址（可选） |
+| `MCP_SERVERS_JSON` | MCP server 配置 JSON（可选） |
+
+Windows 详细启动步骤见 [WINDOWS_SETUP.md](WINDOWS_SETUP.md)。
 
 ---
 

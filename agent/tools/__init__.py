@@ -17,6 +17,7 @@ from .filesystem import ReadFileTool, WriteFileTool, EditFileTool
 from .search import GlobTool, GrepTool
 from .todo import TodoStore, UpdateTodosTool
 from .dispatch import DispatchSubagentTool
+from .mcp import MCPCallTool, MCPProxyTool, build_mcp_tools
 
 __all__ = [
     "Tool",
@@ -41,4 +42,7 @@ __all__ = [
     "TodoStore",
     "UpdateTodosTool",
     "DispatchSubagentTool",
+    "MCPCallTool",
+    "MCPProxyTool",
+    "build_mcp_tools",
 ]

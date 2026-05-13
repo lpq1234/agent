@@ -3,7 +3,6 @@ import os
 import sys
 from pathlib import Path
 
-import anthropic
 from dotenv import load_dotenv
 
 from .compactor import Compactor
@@ -13,10 +12,11 @@ from .runner import AgentRunner
 from .skills import SkillsLoader
 from .subagents import SubagentRegistry
 from .telemetry import TokenTracker
+from .providers import AnthropicProvider, OpenAIProvider
 from .tools import (
     LoadSkill, RunCommand, ToolRegistry, WebFetch,
     ReadFileTool, WriteFileTool, EditFileTool, GlobTool, GrepTool,
-    TodoStore, UpdateTodosTool, DispatchSubagentTool,
+    TodoStore, UpdateTodosTool, DispatchSubagentTool, build_mcp_tools,
 )
 
 
@@ -26,10 +26,17 @@ class AgentLoop:
         load_dotenv()
         self.root = root or Path(__file__).parent.parent
 
-        client = anthropic.Anthropic(
-            api_key=os.environ["ANTHROPIC_API_KEY"],
-            base_url=os.environ.get("ANTHROPIC_BASE_URL"),
-        )
+        provider_name = os.environ.get("LLM_PROVIDER", "anthropic").lower().strip()
+        if provider_name == "openai":
+            client = OpenAIProvider(
+                api_key=os.environ["OPENAI_API_KEY"],
+                base_url=os.environ.get("OPENAI_BASE_URL"),
+            )
+        else:
+            client = AnthropicProvider(
+                api_key=os.environ["ANTHROPIC_API_KEY"],
+                base_url=os.environ.get("ANTHROPIC_BASE_URL"),
+            )
 
         self.memory = MemoryStore(
             memory_dir=self.root / "memory",
@@ -51,6 +58,8 @@ class AgentLoop:
         registry.register(EditFileTool(workspace))
         registry.register(GlobTool(workspace))
         registry.register(GrepTool(workspace))
+        for mcp_tool in build_mcp_tools():
+            registry.register(mcp_tool)
 
         self.todos = TodoStore()
         registry.register(UpdateTodosTool(self.todos))

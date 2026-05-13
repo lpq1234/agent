@@ -74,12 +74,14 @@ class Compactor:
             now_hhmm=datetime.now(_UTC8).strftime("%H:%M"),
         )
 
-        resp = self.client.messages.create(
+        resp = self.client.create_message(
             model=self.model,
             max_tokens=self.max_tokens,
+            system=None,
+            tools=None,
             messages=[{"role": "user", "content": prompt}],
         )
-        text = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text")
+        text = "".join(b.get("text", "") for b in resp.content if b.get("type") == "text")
 
         episode = _extract("episode", text)
         new_memory = _extract("updated_memory", text)
@@ -107,12 +109,14 @@ class Compactor:
             today_episode=self.memory.read_today_episode() or "(空)",
             now_hhmm=datetime.now(_UTC8).strftime("%H:%M"),
         )
-        resp = self.client.messages.create(
+        resp = self.client.create_message(
             model=self.model,
             max_tokens=self.max_tokens,
+            system=None,
+            tools=None,
             messages=[{"role": "user", "content": prompt}],
         )
-        text = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text")
+        text = "".join(b.get("text", "") for b in resp.content if b.get("type") == "text")
         if episode := _extract("episode", text):
             self.memory.append_episode(episode)
         if new_memory := _extract("updated_memory", text):
